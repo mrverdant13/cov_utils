@@ -33,9 +33,17 @@ Coverage trace file to be used for the coverage report generation.''',
         outputOption,
         abbr: outputOption[0],
         help: '''
-Destination directory where the generated coverage report will be stored.''',
+Destination directory where the generated html coverage report will be stored.''',
         valueHelp: _outputHelpValue,
         defaultsTo: 'coverage/html/',
+      )
+      ..addOption(
+        markdownOption,
+        abbr: markdownOption[0],
+        help: '''
+Destination directory where the generated markdown coverage report will be stored.''',
+        valueHelp: _markdownHelpValue,
+        defaultsTo: 'coverage/markdown/report.md',
       )
       ..addFlag(
         launchFlag,
@@ -74,6 +82,7 @@ High threshold.''',
 
   static const _inputHelpValue = 'TRACE_FILE';
   static const _outputHelpValue = 'REPORT_DIR';
+  static const _markdownHelpValue = 'MARKDOWN_REPORT_DIR';
   static const _mediumHelpValue = 'MEDIUM_VAL';
   static const _highHelpValue = 'HIGH_VAL';
 
@@ -92,6 +101,10 @@ High threshold.''',
   /// Option name to set the high threshold for coverage validation.
   @visibleForTesting
   static const highOption = 'high';
+
+  /// Option name to generate a markdown report
+  @visibleForTesting
+  static const markdownOption = 'markdown';
 
   /// Flag name to indicate if the resulting report should be launched in the
   /// browser.
@@ -128,6 +141,15 @@ Generate the coverage report inside $_outputHelpValue from the $_inputHelpValue 
         ),
       ),
     );
+    final markdownReportDirPath = path.joinAll(
+      path.split(
+        checkOption(
+          optionKey: markdownOption,
+          optionName: 'markdown report folder',
+        ),
+      ),
+    );
+
     final mediumString = checkOption(
       optionKey: mediumOption,
       optionName: 'medium threshold',
@@ -149,6 +171,9 @@ Generate the coverage report inside $_outputHelpValue from the $_inputHelpValue 
     final reportDirAbsPath = path.isAbsolute(reportDirPath)
         ? reportDirPath
         : path.join(Directory.current.path, reportDirPath);
+    final markdownReportDirAbsPath = path.isAbsolute(markdownReportDirPath)
+        ? markdownReportDirPath
+        : path.join(Directory.current.path, markdownReportDirPath);
     final traceFileAbsPath = path.isAbsolute(traceFilePath)
         ? traceFilePath
         : path.join(Directory.current.path, traceFilePath);
@@ -166,6 +191,17 @@ Generate the coverage report inside $_outputHelpValue from the $_inputHelpValue 
 
     // Parse trace file data.
     final traceFileData = TraceFile.parse(traceFileContent);
+
+    // generate markdown report
+    File(markdownReportDirAbsPath)
+      ..createSync(recursive: true)
+      ..writeAsStringSync(
+        '''
+${traceFileData.generateBadge(medium: medium, high: high)}
+
+${traceFileData.generateMarkdownReport(medium: medium, high: high)}
+''',
+      );
 
     // Build cov report base tree.
     final covTree = traceFileData.asTree

@@ -62,6 +62,67 @@ class TraceFile extends CovComputable {
 
   static const _sourceFilesCovDataEquality = IterableEquality<CovFile>();
 
+  /// generates a markdown report base on the given thresholds [medium], [high]
+  String generateMarkdownReport({
+    required double medium,
+    required double high,
+  }) {
+    final buffer = StringBuffer()
+      ..writeln('```')
+      ..writeln('Minimum coverage : $medium')
+      ..writeln('Code coverage threshold : [$medium - $high]')
+      ..writeln('```')
+      ..writeln()
+      ..writeln('<details>')
+      ..writeln()
+      ..writeln('<summary> View Report </summary>')
+      ..writeln()
+      ..writeln('File | Lines Covered | Coverage | Health')
+      ..writeln('-------- | --------- | -------- | --------');
+
+    final sourceFilesCovDataSorted =
+        sourceFilesCovData.sorted((a, b) => a.coverage.compareTo(b.coverage));
+
+    for (final covFile in sourceFilesCovDataSorted) {
+      buffer.write(
+        '${covFile.source.path} | ${covFile.linesHit}/${covFile.linesFound} | ${covFile.coverageString} | ',
+      );
+
+      if (covFile.coverage >= high) {
+        buffer.writeln('✅');
+      } else if (covFile.coverage >= medium) {
+        buffer.writeln('👍');
+      } else {
+        buffer.writeln('❌');
+      }
+    }
+
+    buffer
+      ..writeln('Summary | $coverageString ($linesHit/$linesFound)')
+      ..writeln()
+      ..writeln('</details>');
+
+    return buffer.toString();
+  }
+
+  /// generates a github badge showing code coverage percentage based on
+  /// the given thresholds [medium], [high]
+  String generateBadge({
+    required double medium,
+    required double high,
+  }) {
+    var badgeColor = 'grey';
+
+    if (coverage >= high) {
+      badgeColor = 'success';
+    } else if (coverage >= medium) {
+      badgeColor = 'yellow';
+    } else {
+      badgeColor = 'red';
+    }
+    return '<img alt="Code coverage" src="https://img.shields.io/badge/Code%20Coverage-$coverageString%25-$badgeColor?style=flat-square">';
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;

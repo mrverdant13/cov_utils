@@ -150,7 +150,11 @@ $ dart pub global activate coverde
 
 ## `coverde report`
 
-**Generate HTML coverage report.**
+**Generate HTML & Markdown coverage report.**
+
+> [!NOTE]
+> Generated markdown report is a single file containing a short report of coverage for each file and summary of the entire coverage
+> it can be useful when you want to comment a report of the code coverage inside pull requests. 
 
 ### Options
 
@@ -161,8 +165,13 @@ $ dart pub global activate coverde
 
 - `--output` | `-o`
 
-  Destination folder where the generated report files will be placed.\
+  Destination folder where the generated html report files will be placed.\
   Default value: `coverage/html/`
+
+- `--markdown` | `-m`
+
+  Destination folder where the generated markdown report file will be placed.\
+  Default value: `coverage/markdown/report.md`
 
 - `--medium`
 
@@ -197,6 +206,8 @@ $ dart pub global activate coverde
 
 ![Report example (file)][_docs_coverde_report_example_2]
 
+![Markdown report example (file)][_docs_coverde_report_example_3]
+
 ## `coverde value`
 
 **Compute and display the coverage value from a trace file.**
@@ -226,7 +237,6 @@ $ dart pub global activate coverde
 # Usage with [melos][melos_link]
 
 If your project uses melos to manage its multi-package structure, it could be handy to collect test coverage data in a unified trace file.
-
 This can be achieved by defining a melos script as follows:
 
 ```yaml
@@ -271,6 +281,7 @@ Pull request are also welcome. See [CONTRIBUTING.md][_docs_contributing_link].
 [_docs_coverde_check_example_2]: https://github.com/mrverdant13/coverde/blob/main/packages/coverde_cli/doc/check_result_fail.png?raw=true
 [_docs_coverde_report_example_1]: https://github.com/mrverdant13/coverde/blob/main/packages/coverde_cli/doc/report_directory_example.png?raw=true
 [_docs_coverde_report_example_2]: https://github.com/mrverdant13/coverde/blob/main/packages/coverde_cli/doc/report_file_example.png?raw=true
+[_docs_coverde_report_example_3]: https://github.com/mrverdant13/coverde/blob/main/packages/coverde_cli/doc/markdown_report_file_example.png?raw=true
 [codecov_badge]: https://codecov.io/gh/mrverdant13/coverde/branch/main/graph/badge.svg
 [codecov_link]: https://codecov.io/gh/mrverdant13/coverde
 [codefactor_badge]: https://www.codefactor.io/repository/github/mrverdant13/coverde/badge
