@@ -10,4 +10,4 @@ dependencies:
   pana: any # Using the latest version of `pana` to ensure that the package score computation method is also up-to-date.
 
 dev_dependencies:
-  very_good_analysis: ^6.0.0
+  very_good_analysis: ^7.0.0
